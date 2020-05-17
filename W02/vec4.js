@@ -8,7 +8,7 @@
  }
         min()
         {
-                var min = this.x
+                var min = this.x;
                 if
                 {
                  min > this.y
@@ -49,7 +49,8 @@
                 if
                 {
                   mid < this.z
-                  mid = this.z
+                  mid = this.z;
                 }
           return mid;
         }
+}
