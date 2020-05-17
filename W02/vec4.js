@@ -23,9 +23,8 @@
          max()
         {
                 var max = this.x;
-                if
+                if(this.y > max)
                 {
-                 this.y > max
                 max = this.y;
                 }
                 if(this.z > max)
