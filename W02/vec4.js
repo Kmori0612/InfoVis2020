@@ -9,14 +9,12 @@
         min()
         {
                 var min = this.x;
-                if
+                if(min > this.y)
                 {
-                 min > this.y
                  min = this.y;
                 }
-                if
+                if(min > this.z)
                 {
-                min > this.z
                 min = this.z;
                 }
                 return min;
@@ -30,9 +28,8 @@
                  this.y > max
                 max = this.y;
                 }
-                if
+                if(this.z > max)
                 {
-                 this.z > max
                 max = this.z;
                 }
                 return max;
@@ -41,14 +38,12 @@
          mid()
         {
                 var mid = this.x;
-                if
+                if(mid > this.y)
                 {
-                 mid > this.y
                 mid = this.y;
                 }
-                if
+                if( mid < this.z)
                 {
-                  mid < this.z
                   mid = this.z;
                 }
           return mid;
