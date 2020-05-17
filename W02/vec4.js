@@ -41,7 +41,7 @@
                 {
                 mid = this.y;
                 }
-                if( mid < this.z)
+                if(mid < this.z)
                 {
                   mid = this.z;
                 }
