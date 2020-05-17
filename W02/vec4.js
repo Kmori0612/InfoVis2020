@@ -12,7 +12,7 @@
                 if
                 {
                  min > this.y
-                min = this.y;
+                 min = this.y;
                 }
                 if
                 {
