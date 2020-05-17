@@ -1,4 +1,4 @@
-  class Vec3
+  class Vec4
 {
   constructor(x,y,z) {
     this.x = x;
