@@ -37,11 +37,11 @@
          mid()
         {
                 var mid = this.x;
-                if(mid > this.y)
+                if(mid < this.y)
                 {
                 mid = this.y;
                 }
-                if(mid < this.z)
+                if(mid > this.z)
                 {
                   mid = this.z;
                 }
