@@ -46,3 +46,10 @@
                  mid > this.y
                 mid = this.y;
                 }
+                if
+                {
+                  mid < this.z
+                  mid = this.z
+                }
+          return mid;
+        }
