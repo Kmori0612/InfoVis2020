@@ -85,9 +85,9 @@ function main()
         var S0 = scalars[ id[0] ];
         var S1 = scalars[ id[1] ];
         var S2 = scalars[ id[2] ];
-        var C0 = new THREE.Color().setHex( cmap[ S0 ][1] );
-        var C1 = new THREE.Color().setHex( cmap[ S1 ][1] );
-        var C2 = new THREE.Color().setHex( cmap[ S2 ][1] );
+        var C0 = new THREE.Color().setHex( cmap[ S0*Math.floor(256/7) - Math.floor(256/7) ][1] );
+        var C1 = new THREE.Color().setHex( cmap[ S1*Math.floor(256/7) - Math.floor(256/7) ][1] );
+        var C2 = new THREE.Color().setHex( cmap[ S2*Math.floor(256/7) - Math.floor(256/7) ][1] );
         geometry.faces[i].vertexColors.push( C0 );
         geometry.faces[i].vertexColors.push( C1 );
         geometry.faces[i].vertexColors.push( C2 );
