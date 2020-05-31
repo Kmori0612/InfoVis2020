@@ -32,16 +32,16 @@ function main()
     ];
 
     var scalars = [
-        0.1, // S0
-        0.2, // S1
-        0.8  // S2
+        0, // S0
+        128, // S1
+        256  // S2
     ];
 
     // Create color map
     var cmap = [];
-    for ( var i = 0; i < 0.8; i++ )
+    for ( var i = 0; i < 256; i++ )
     {
-        var S = i / 0.79; // [0,1]
+        var S = i / 255.0; // [0,1]
         var R = Math.max( Math.cos( ( S - 1.0 ) * Math.PI ), 0.0 );
         var G = Math.max( Math.cos( ( S - 0.5 ) * Math.PI ), 0.0 );
         var B = Math.max( Math.cos( S * Math.PI ), 0.0 );
