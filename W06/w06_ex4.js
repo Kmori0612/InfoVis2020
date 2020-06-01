@@ -24,7 +24,8 @@ function main()
     var vertices = [
         [ -1,  1, 0 ], // 0
         [ -1, -1, 0 ], // 1
-        [  1, -1, 0 ]  // 2
+        [  1, -1, 0 ], // 2
+        [  1,  1, 0 ]  // 3
     ];
 
     var faces = [
@@ -33,8 +34,9 @@ function main()
 
     var scalars = [
         0.1,   // S0
-        0.2, // S1
-        0.8  // S2
+        0.2,  // S1
+        0.8,  // S2
+        0.5
     ];
 
     // Create color map
@@ -73,7 +75,7 @@ function main()
     for ( var i = 0; i < nfaces; i++ )
     {
         var id = faces[i];
-        var face = new THREE.Face3( id[0], id[1], id[2] );
+        var face = new THREE.Face3( id[0], id[1], id[2], id[3] );
         geometry.faces.push( face );
     }
 
@@ -85,12 +87,15 @@ function main()
         var S0 = scalars[ id[0] ];
         var S1 = scalars[ id[1] ];
         var S2 = scalars[ id[2] ];
+        var S3 = scalars[ id[3] ]
         var C0 = new THREE.Color().setHex( cmap[ S0*10*Math.floor(256/7) - Math.floor(256/7) ][1] );
         var C1 = new THREE.Color().setHex( cmap[ S1*10*Math.floor(256/7) - Math.floor(256/7) ][1] );
         var C2 = new THREE.Color().setHex( cmap[ S2*10*Math.floor(256/7) - Math.floor(256/7) ][1] );
+        var C3 = new THREE.Color().setHex( cmap[ S3*10*Math.floor(256/7) - Math.floor(256/7) ][1] );
         geometry.faces[i].vertexColors.push( C0 );
         geometry.faces[i].vertexColors.push( C1 );
         geometry.faces[i].vertexColors.push( C2 );
+        geometry.faces[i].vertexColors.push( C3 );
     }
 
     var triangle = new THREE.Mesh( geometry, material );
