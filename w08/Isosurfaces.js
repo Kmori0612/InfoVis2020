@@ -61,6 +61,18 @@ function Isosurfaces( volume, isovalue )
     }
 
     geometry.computeVertexNormals();
+    
+      // Create a color map
+    var cmap = [];
+    for ( var i = 0; i < 256; i++ )
+    {
+        var S = i / 255.0; // [0,1]
+        var R = Math.max( Math.cos( ( S - 1.0 ) * Math.PI ), 0.0 );
+        var G = Math.max( Math.cos( ( S - 0.5 ) * Math.PI ), 0.0 );
+        var B = Math.max( Math.cos( S * Math.PI ), 0.0 );
+        var color = new THREE.Color( R, G, B );
+        cmap.push( [ S, '0x' + color.getHexString() ] );
+    }
 
     material.color = new THREE.Color( "white" );
 
@@ -108,6 +120,38 @@ function Isosurfaces( volume, isovalue )
         return index;
     }
 
+      // Assign colors for each vertex
+    material.vertexColors = THREE.VertexColors;
+    for ( var i = 0; i < nfaces; i++ )
+    {
+        var id = faces[i];
+        var S0 = scalars[ id[0] ];
+        var S1 = scalars[ id[1] ];
+        var S2 = scalars[ id[2] ];
+        var S3 = scalars[ id[3] ];
+        var S4 = scalars[ id[4] ];
+        var S5 = scalars[ id[5] ];
+        var S6 = scalars[ id[6] ];
+       
+        var C0 = new THREE.Color().setHex( cmap[ S0 ][1] );
+        var C1 = new THREE.Color().setHex( cmap[ S1 ][1] );
+        var C2 = new THREE.Color().setHex( cmap[ S2 ][1] );
+        var C3 = new THREE.Color().setHex( cmap[ S3 ][1] );
+        var C4 = new THREE.Color().setHex( cmap[ S4 ][1] );
+        var C5 = new THREE.Color().setHex( cmap[ S5 ][1] );  
+        var C6 = new THREE.Color().setHex( cmap[ S6 ][1] );
+        geometry.faces[i].vertexColors.push( C0 );
+        geometry.faces[i].vertexColors.push( C1 );
+        geometry.faces[i].vertexColors.push( C2 );
+        geometry.faces[i].vertexColors.push( C3 );
+        geometry.faces[i].vertexColors.push( C4 );
+        geometry.faces[i].vertexColors.push( C5 );
+        geometry.faces[i].vertexColors.push( C6 );
+        
+        
+    }
+
+    
     function interpolated_vertex( v0, v1, s )
     {
         return new THREE.Vector3().addVectors( v0, v1 ).divideScalar( 2 );
