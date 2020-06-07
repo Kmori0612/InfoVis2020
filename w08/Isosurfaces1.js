@@ -91,7 +91,7 @@ function Isosurfaces( volume, isovalue )
 
     var C0 = new THREE.Color().setHex( cmap[isovalue][1] );
     var C1 = new THREE.Color().setHex( cmap[isovalue][1] );
-    var C2 = new THREE.Color().setHex( cmap[isovalue][0] );
+    var C2 = new THREE.Color().setHex( cmap[isovalue][1] );
 
      material.color = new THREE.Color( C0 );
      material.color = new THREE.Color( C1 ); 
