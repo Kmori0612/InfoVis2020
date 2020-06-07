@@ -93,8 +93,7 @@ function Isosurfaces( volume, isovalue )
    
 
      material.color = new THREE.Color( C0 );
-     material.color = new THREE.Color( C1 ); 
-     material.color = new THREE.Color( C2 );
+  
 
     return new THREE.Mesh( geometry, material );
 
