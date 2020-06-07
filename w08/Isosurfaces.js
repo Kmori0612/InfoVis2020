@@ -84,7 +84,7 @@ function Isosurfaces( volume, isovalue )
         'dimensions': { 'width': 0.15, 'height': 1.2 }
     } ) );
 
-    material.color = new THREE.Color( "red" );
+    material.color = new THREE.Color( "white" );
 
     return new THREE.Mesh( geometry, material );
 
