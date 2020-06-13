@@ -92,10 +92,16 @@ function TransferFunctionTexture()
     var resolution = 256;
     var width = resolution;
     var height = 1;
+  
+  
+
     var data = new Float32Array( width * height * 4 );
     for ( var i = 0; i < resolution; i++ )
     {
-       var alpha = i / 255.0;
+       
+       
+        
+        var alpha = i / 255.0;
        
         var R =1 ;
         var G =  Math.max( Math.cos( alpha * Math.PI ), 0.0 );
@@ -105,8 +111,6 @@ function TransferFunctionTexture()
         data[ 4 * i + 1 ] = G;
         data[ 4 * i + 2 ] = B;
         data[ 4 * i + 3 ] = alpha;
-    
-        
     }
 
     var format = THREE.RGBAFormat;
