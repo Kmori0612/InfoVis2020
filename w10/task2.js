@@ -93,7 +93,7 @@ function TransferFunctionTexture()
     var width = resolution;
     var height = 1;
     var data = new Float32Array( width * height * 4 );
-    var cmap = [];
+    
     for ( var i = 0; i < 256; i++ )
     {
         var S = i / 255.0; // [0,1]
@@ -101,8 +101,7 @@ function TransferFunctionTexture()
         var G = 1.0 - S;
         var B = 1.0 - S;
         var color = new THREE.Color( R, G, B );
-        cmap.push( [ S, '0x' + color.getHexString() ] );
-    }
+            }
         
     }
 
