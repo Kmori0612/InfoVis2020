@@ -96,9 +96,11 @@ function TransferFunctionTexture()
     for ( var i = 0; i < resolution; i++ )
     {
          var alpha = i / 255.0;
-        var R = 1.0;
-        var G = 1.0 - alpha;
-        var B = 1.0 - alpha;
+         var S = i / 255.0;
+        var R = Math.max( Math.cos( 0 * Math.PI ), 0.0 );
+        var G = Math.max( Math.cos( S * Math.PI ), 0.0 );
+        var B = Math.max( Math.cos( S * Math.PI ), 0.0 );
+        
         var color = new THREE.Color( R, G, B );
         
         data[ 4 * i + 0 ] = color.x;
