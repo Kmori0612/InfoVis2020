@@ -101,9 +101,9 @@ function TransferFunctionTexture()
         var G =  Math.max( Math.cos( alpha * Math.PI ), 0.0 );
         var B = Math.max( Math.cos(alpha  * Math.PI ), 0.0 );
         
-        data[ 4 * i + 0 ] = color.x;
-        data[ 4 * i + 1 ] = color.y;
-        data[ 4 * i + 2 ] = color.z;
+        data[ 4 * i + 0 ] = R;
+        data[ 4 * i + 1 ] = G;
+        data[ 4 * i + 2 ] = B;
         data[ 4 * i + 3 ] = alpha;
     
         
