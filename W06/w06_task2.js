@@ -1,69 +1,40 @@
-function main()
+function BoundingBoxGeometry( volume )
 {
-    var width = 500;
-    var height = 500;
+    var minx = volume.min_coord.x;
+    var miny = volume.min_coord.y;
+    var minz = volume.min_coord.z;
 
-    var scene = new THREE.Scene();
-
-    var fov = 45;
-    var aspect = width / height;
-    var near = 1;
-    var far = 1000;
-    var camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-    camera.position.set( 0, 0, 5 );
-    scene.add( camera );
-
-    var light = new THREE.PointLight();
-    light.position.set( 5, 5, 5 );
-    scene.add( light );
-
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize( width, height );
-    document.body.appendChild( renderer.domElement );
+    var maxx = volume.max_coord.x;
+    var maxy = volume.max_coord.y;
+    var maxz = volume.max_coord.z;
 
     var vertices = [
-        [ -1,  1, 0 ], // 0
-        [ -1, -1, 0 ], // 1
-        [  1, -1, 0 ]  // 2
+        [ minx, miny, minz ], // 0
+        [ maxx, miny, minz ], // 1
+        [ maxx, miny, maxz ], // 2
+        [ minx, miny, maxz ], // 3
+        [ minx, maxy, minz ], // 4
+        [ maxx, maxy, minz ], // 5
+        [ maxx, maxy, maxz ], // 6
+        [ minx, maxy, maxz ] // 7
     ];
 
     var faces = [
         [ 0, 1, 2 ], // f0
+        [ 0, 2, 3 ], // f1
+        [ 7, 6, 5 ], // f2
+        [ 7, 5, 4 ], // f3
+        [ 0, 4, 1 ], // f4
+        [ 1, 4, 5 ], // f5
+        [ 1, 5, 6 ], // f6
+        [ 1, 6, 2 ], // f7
+        [ 2, 6, 3 ], // f8
+        [ 3, 6, 7 ], // f9
+        [ 0, 3, 7 ], // f10
+        [ 0, 7, 4 ], // f11
     ];
-
-    var scalars = [
-        0.1, // S0
-        0.2, // S1
-        0.8  // S2
-    ];
-
-    var Smin = Math.min.apply( null, scalars );
-    var Smax = Math.max.apply( null, scalars );
-
-    // Create color map
-    var cmap = [];
-    for ( var i = 0; i < 256; i++ )
-    {
-        var S = i / 255.0; // [0,1]
-        var R = 1.0;
-        var G = 1.0 - S;
-        var B = 1.0 - S;
-        var color = new THREE.Color( R, G, B );
-        cmap.push( [ S, '0x' + color.getHexString() ] );
-    }
-
-    // Draw color map
-    var lut = new THREE.Lut( 'rainbow', cmap.length );
-    lut.addColorMap( 'mycolormap', cmap );
-    lut.changeColorMap( 'mycolormap' );
-    scene.add( lut.setLegendOn( {
-        'layout':'horizontal',
-        'position': { 'x': 0.6, 'y': -1.1, 'z': 2 },
-        'dimensions': { 'width': 0.15, 'height': 1.2 }
-    } ) );
 
     var geometry = new THREE.Geometry();
-    var material = new THREE.MeshBasicMaterial();
 
     var nvertices = vertices.length;
     for ( var i = 0; i < nvertices; i++ )
@@ -80,38 +51,160 @@ function main()
         geometry.faces.push( face );
     }
 
-    // Assign colors for each vertex
-    material.vertexColors = THREE.VertexColors;
-    for ( var i = 0; i < nfaces; i++ )
+    geometry.doubleSided = true;
+
+    return geometry;
+}
+
+function VolumeTexture( volume )
+{
+    var width = volume.resolution.x * volume.resolution.z;
+    var height = volume.resolution.y;
+    var data = new Uint8Array( width * height );
+    for ( var z = 0, index = 0; z < volume.resolution.z; z++ )
     {
-        var id = faces[i];
-        var S0 = scalars[ id[0] ];
-        var S1 = scalars[ id[1] ];
-        var S2 = scalars[ id[2] ];
-        var I0 = Math.round( normalized( S0, Smin, Smax ) * 255 );
-        var I1 = Math.round( normalized( S1, Smin, Smax ) * 255 );
-        var I2 = Math.round( normalized( S2, Smin, Smax ) * 255 );
-        var C0 = new THREE.Color().setHex( cmap[ I0 ][1] );
-        var C1 = new THREE.Color().setHex( cmap[ I1 ][1] );
-        var C2 = new THREE.Color().setHex( cmap[ I2 ][1] );
-        geometry.faces[i].vertexColors.push( C0 );
-        geometry.faces[i].vertexColors.push( C1 );
-        geometry.faces[i].vertexColors.push( C2 );
+        for ( var y = 0; y < volume.resolution.y; y++ )
+        {
+            for ( var x = 0; x < volume.resolution.x; x++, index++ )
+            {
+                var u = volume.resolution.x * z + x;
+                var v = y;
+                data[ width * v + u ] = volume.values[index][0];
+            }
+        }
     }
 
-    var triangle = new THREE.Mesh( geometry, material );
-    scene.add( triangle );
+    var format = THREE.AlphaFormat;
+    var type = THREE.UnsignedByteType;
 
-    loop();
+    var texture = new THREE.DataTexture( data, width, height, format, type );
+    texture.generateMipmaps = false;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    texture.needsUpdate = true;
+    return texture;
+}
 
-    function loop()
+function TransferFunctionTexture()
+{
+    var resolution = 256;
+    var width = resolution;
+    var height = 1;
+  
+  
+
+    var data = new Float32Array( width * height * 4 );
+    for ( var i = 0; i < resolution; i++ )
     {
-        requestAnimationFrame( loop );
-        renderer.render( scene, camera );
+       
+       
+        
+        var alpha = i / 255.0;
+       
+        var R =1 ;
+        var G =  Math.max( Math.cos( alpha * Math.PI ), 0.0 );
+        var B = Math.max( Math.cos(alpha  * Math.PI ), 0.0 );
+        
+        data[ 4 * i + 0 ] = R;
+        data[ 4 * i + 1 ] = G;
+        data[ 4 * i + 2 ] = B;
+        data[ 4 * i + 3 ] = alpha;
     }
 
-    function normalized( s, smin, smax )
+    var format = THREE.RGBAFormat;
+    var type = THREE.FloatType;
+
+    var texture = new THREE.DataTexture( data, width, height, format, type );
+    texture.generateMipmaps = false;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    texture.needsUpdate = true;
+    return texture;
+}
+
+function main()
+{
+    var volume = new KVS.LobsterData();
+    var screen = new KVS.THREEScreen();
+
+    screen.init( volume, {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        enableAutoResize: false
+    });
+
+//    screen.dynamicDampingFactor = 0.3;
+//    screen.trackball.rotatetSpeed = 1.0;
+//    screen.trackball.noPan = false;
+//    screen.trackball.noZoom = false;
+//    screen.renderer.setClearColor( new THREE.Color( "black" ) );
+
+    var exit_buffer = new THREE.Scene();
+    var exit_texture = new THREE.WebGLRenderTarget(
+        screen.width, screen.height,
+        {
+            minFilter: THREE.LinearFilter,
+            magFilter: THREE.LinearFilter,
+            wrapS: THREE.ClampToEdgeWrapping,
+            wrapT: THREE.ClampToEdgeWrapping,
+            format: THREE.RGBFormat,
+            type: THREE.FloatType,
+            generateMipmaps: false
+        }
+    );
+
+    var bounding_geometry = BoundingBoxGeometry( volume );
+    var volume_texture = VolumeTexture( volume );
+    var transfer_function_texture = TransferFunctionTexture();
+
+    var bounding_material = new THREE.ShaderMaterial( {
+        vertexShader: document.getElementById( 'bounding.vert' ).textContent,
+        fragmentShader: document.getElementById( 'bounding.frag' ).textContent,
+        side: THREE.BackSide
+    });
+
+    var bounding_mesh = new THREE.Mesh( bounding_geometry, bounding_material );
+    exit_buffer.add( bounding_mesh );
+
+    var raycaster_material = new THREE.ShaderMaterial( {
+        vertexShader: document.getElementById( 'raycaster.vert' ).textContent,
+        fragmentShader: document.getElementById( 'raycaster.frag' ).textContent,
+        side: THREE.FrontSide,
+        uniforms: {
+            volume_resolution: { type: "v3", value: volume.resolution },
+            exit_points: { type: "t", value: exit_texture },
+            volume_data: { type: "t", value: volume_texture },
+            transfer_function_data: { type: "t", value: transfer_function_texture },
+            light_position: { type: 'v3', value: screen.light.position },
+            camera_position: { type: 'v3', value: screen.camera.position },
+            background_color: { type: 'v3', value: new THREE.Vector3().fromArray( screen.renderer.getClearColor().toArray() ) },
+        }
+    });
+
+    var raycaster_mesh = new THREE.Mesh( bounding_geometry, raycaster_material );
+    screen.scene.add( raycaster_mesh );
+
+    document.addEventListener( 'mousemove', function() {
+        screen.light.position.copy( screen.camera.position );
+    });
+
+    window.addEventListener( 'resize', function() {
+        screen.resize( [ window.innerWidth, window.innerHeight ] );
+    });
+
+    screen.loop();
+
+    screen.draw = function()
     {
-        return ( s - smin ) / ( smax - smin );
+        if ( screen.renderer == undefined ) return;
+        screen.scene.updateMatrixWorld();
+        screen.trackball.handleResize();
+        screen.renderer.render( exit_buffer, screen.camera, exit_texture, true );
+        screen.renderer.render( screen.scene, screen.camera );
+        screen.trackball.update();
     }
 }
