@@ -95,12 +95,18 @@ function TransferFunctionTexture()
     var data = new Float32Array( width * height * 4 );
     for ( var i = 0; i < resolution; i++ )
     {
-        var color = KVS.RainbowColorMap( 0, 255, i );
-        var alpha = i / 255.0;
-        data[ 4 * i + 0 ] = color.x;
-        data[ 4 * i + 1 ] = color.y;
-        data[ 4 * i + 2 ] = color.z;
-        data[ 4 * i + 3 ] = alpha;
+      
+    var cmap = [];
+    for ( var i = 0; i < 256; i++ )
+    {
+        var S = i / 255.0; // [0,1]
+        var R = Math.max( Math.cos( 0 * Math.PI ), 0.0 );
+        var G = Math.max( Math.cos( S * Math.PI ), 0.0 );
+        var B = Math.max( Math.cos( S * Math.PI ), 0.0 );
+        var color = new THREE.Color( R, G, B );
+        cmap.push( [ S, '0x' + color.getHexString() ] );
+    }
+        
     }
 
     var format = THREE.RGBAFormat;
