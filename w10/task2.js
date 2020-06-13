@@ -93,15 +93,19 @@ function TransferFunctionTexture()
     var width = resolution;
     var height = 1;
     var data = new Float32Array( width * height * 4 );
-    
-    for ( var i = 0; i < 256; i++ )
+    for ( var i = 0; i < resolution; i++ )
     {
-        var S = i / 255.0; // [0,1]
+         var alpha = i / 255.0;
         var R = 1.0;
-        var G = 1.0 - S;
-        var B = 1.0 - S;
+        var G = 1.0 - alpha;
+        var B = 1.0 - alpha;
         var color = new THREE.Color( R, G, B );
-            }
+        
+        data[ 4 * i + 0 ] = color.x;
+        data[ 4 * i + 1 ] = color.y;
+        data[ 4 * i + 2 ] = color.z;
+        data[ 4 * i + 3 ] = alpha;
+    
         
     }
 
